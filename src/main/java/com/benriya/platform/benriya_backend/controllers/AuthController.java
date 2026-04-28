@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.benriya.platform.benriya_backend.dto.*;
 import com.benriya.platform.benriya_backend.models.User;
+import com.benriya.platform.benriya_backend.security.JwtUtil;
 import com.benriya.platform.benriya_backend.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest request) {
@@ -29,7 +31,7 @@ public class AuthController {
 
         User user = userService.loginUser(request.getEmail(), request.getPassword());
 
-        String token = "dummy-jwt-token"; // replace with real JWT
+        String token = jwtUtil.generateToken(user.getEmail());
 
         return ResponseEntity.ok(
                 AuthResponse.builder()
